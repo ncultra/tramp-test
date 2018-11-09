@@ -5,14 +5,14 @@ CFLAGS = -c -g  -Wall -Werror -fPIC -std=gnu11
 CEXTRA = -nostdlib
 LFLAGS = -Xlinker --script $(LINK_SCRIPT)
 
-OBJS = tramp_test.o trampoline.o 
+OBJS = trampoline.o  tramp_test.o 
 CLEAN = rm -f $(EXE) *.o *.a *.tramp *.so *.S *.map *.asm
 
 .PHONY: all
-all: mapfile
+all: tramp_test mapfile
 
-*.o: *.c
-	$(CC) $(CFLAGS) $<
+#*.o: *.c
+#	$(CC) $(CFLAGS) $<
 
 .PHONY: tramp_test
 tramp_test: $(OBJS)
@@ -33,3 +33,9 @@ clean:
 superclean: clean
 	$(shell rm *~ &> /dev/null)
 	@echo "cleaned unwanted backup files"
+
+.PHONY: test
+test: FORCE
+	./tramp_test
+
+FORCE:

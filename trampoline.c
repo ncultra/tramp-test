@@ -1,36 +1,28 @@
 #include "tramp_test.h"
 
-unsigned long regs[128][128] = {{0}};
-extern unsigned long regs___, tramp_start, tramp_end ;
+extern unsigned long regs_start, regs_end, tramp_start, tramp_end;
+extern unsigned long saved_regs[];
+
 
 void __attribute__((section(".tramp"))) top(void)
 {
 top_again:
-   if (!regs[0][0]){
-      printf("regs @ %p; [0][0]: %016lx\n", regs, regs[0][0]);
-      printf("regs___ : %016lx\n", regs___);
-      regs___ = 0;
-      printf("regs___ : %016lx\n", regs___);
-      printf("address of regs___: %p\n", &regs___);
-      printf("address of tramp_start: %p\n", &tramp_start);
-      printf("address of tramp_end: %p\n", &tramp_end);
-   }
+
+   printf("address of regs_start:      0x%08lx\n", (unsigned long)&regs_start);
+   printf("address of regs_end:        0x%08lx\n", (unsigned long)&regs_end);
+   unsigned long size = (&regs_end - &regs_start) * CHAR_BIT;
+   printf("size of saved_regs:         0x%08lx\n", size);
+   printf("address of tramp_start:     0x%08lx\n", (unsigned long)&tramp_start);
+   printf("address of tramp_end:       0x%08lx\n", (unsigned long)&tramp_end);
+   printf("size of section .tramp:     0x%08lx\n", (&tramp_end - &tramp_start) * CHAR_BIT);
    void *position = &&top_again;
-   printf("address of label top_again: %p\n", position);
-   void *r = &regs[0][0];
-   printf("address of regs[0][0]: %p\n", r);
+   printf("address of label top_again: 0x%08lx\n", (unsigned long)position);
+   printf("bits in unsigned char:      0x%08lx\n", (unsigned long)CHAR_BIT);
    return;
 }
 
 void __attribute__((section(".tramp"))) land_here(void)
 {
-   void *start = 0
-;
-   void *end = 0;
-
-   if (start || end) {
-      ;
-   }
    top();
    printf("landed here\n");
    
