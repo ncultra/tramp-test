@@ -3,7 +3,7 @@
 unsigned long regs[128][128] = {{0}};
 extern unsigned long regs___, tramp_start, tramp_end ;
 
-void top(void)
+void __attribute__((section(".tramp"))) top(void)
 {
 top_again:
    if (!regs[0][0]){
@@ -22,8 +22,7 @@ top_again:
    return;
 }
 
-void
-land_here(void)
+void __attribute__((section(".tramp"))) land_here(void)
 {
    void *start = 0
 ;

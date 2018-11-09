@@ -1,22 +1,28 @@
 EXE=tramp_test
 LINK_SCRIPT=$(EXE).ld
 CC	:= gcc
-CFLAGS =  -Wall -Werror -fPIC -std=gnu11
+CFLAGS = -c -g  -Wall -Werror -fPIC -std=gnu11
+CEXTRA = -nostdlib
 LFLAGS = -Xlinker --script $(LINK_SCRIPT)
 
-OBJS=tramp_test.o trampoline.o
-CLEAN=rm -f $(EXE) *.o *.a *.tramp *.so *.S *.map
+OBJS = tramp_test.o trampoline.o 
+CLEAN = rm -f $(EXE) *.o *.a *.tramp *.so *.S *.map *.asm
 
 .PHONY: all
-all: clean tramp_test
+all: mapfile
 
-trampoline.o: trampoline.c
-	$(CC) -c -nostdlib $(CFLAGS) -o trampoline.o trampoline.c
+*.o: *.c
+	$(CC) $(CFLAGS) $<
 
 .PHONY: tramp_test
 tramp_test: $(OBJS)
-	$(CC) $(LFLAGS)  $(CFLAGS) -o $(EXE) $(OBJS)
-	objdump -D -S $(EXE) > $(EXE).S
+	$(CC) $(LFLAGS) -o $(EXE) $(OBJS)
+	$(shell ./dis.sh *.o)
+
+
+.PHONY: mapfile
+mapfile: $(EXE)
+	$(shell ld -M=tramp_test.map -o /dev/null $(EXE) &> /dev/null)
 
 .PHONY: clean
 clean:
@@ -27,14 +33,3 @@ clean:
 superclean: clean
 	$(shell rm *~ &> /dev/null)
 	@echo "cleaned unwanted backup files"
-
-.PHONY: test
-test:
-	@echo $(shell ./$(EXE) --desc --flags c09b --base 49ffffc3 --limit fffff)
-	@echo $(shell ./$(EXE) --selector --index 7 --table 0 --rpl 3)
-	@echo $(shell ./$(EXE) --gdt-entry 0x08888888888888888)
-	@echo $(shell ./$(EXE) --sel-entry 0x88888888)
-	@echo $(shell ./$(EXE) --host-sel)
-	@echo $(shell ./$(EXE) --host-gdt)
-	@echo $(shell ./$(EXE) --linux-sel)
-	@echo $(shell ./$(EXE) --linux-gdt)

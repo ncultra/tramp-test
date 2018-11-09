@@ -1,3 +1,8 @@
+tramp_test
+
+# disassembled targets
+*.o.asm
+
 # Prerequisites
 *.d
 
