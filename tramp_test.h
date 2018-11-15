@@ -11,3 +11,7 @@ struct reg_state {
    uint64_t gp_regs[32];
    uint64_t cr_regs[6];
 };
+
+#ifdef __SEG_GS
+#print "x86 GS namespace supported"
+#endif

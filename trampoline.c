@@ -1,8 +1,7 @@
 #include "tramp_test.h"
 
 extern unsigned long regs_start, regs_end, tramp_start, tramp_end;
-extern uint64_t saved_regs[];
-
+extern uint64_t saved_regs[] __attribute__((section(".tramp")));
 
 void __attribute__((section(".tramp"))) top(void)
 {
@@ -24,6 +23,7 @@ top_again:
 void __attribute__((section(".tramp"))) land_here(void)
 {
    struct reg_state *rstate = NULL;
+   
    uint64_t offset_of = (uint64_t)&land_here - (uint64_t)saved_regs;
    printf("landed here                 0x%08lx\n", (uint64_t)&land_here);
    printf("land_here - saved_regs =    0x%08lx\n", offset_of);
